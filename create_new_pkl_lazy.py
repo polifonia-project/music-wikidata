@@ -4,28 +4,29 @@ import pickle
 import bz2
 import tqdm
 import json
-import itertools
 
-
-def main(wikidata_path, index_path, new_entities_path):
+def main(wikidata_path, new_entities_path):
     KG = dict()
     with open(new_entities_path) as f:
         reader = csv.reader(f, delimiter='\t')
-        qids = [row for row in reader]
-    with open(index_path, 'rb') as f:
-        index = pickle.load(f)
-    for i, qid in enumerate(tqdm.tqdm(qids[1:])):
-        with bz2.open(wikidata_path, 'rt') as bzinput:
+        qids = [row[0] for row in reader]
+    written = 0
+    with bz2.open(wikidata_path, 'rt') as bzinput:
+        for i, entry in enumerate(tqdm.tqdm(bzinput, total=96000000)):
             try:
-                linen = index[qid[0]]
-                #bzinput.seek(linen)
-                #json = next(bzinput)
-                json = next(itertools.islice(bzinput, linen, linen+1))
-                KG[qid[0]] = json
-                assert qid[0] == json['id']
+                data = json.loads(entry[:-2])
+                if data['id'] in qids:
+                    KG[data['id']] = data
+                    written = 0
             except:
-                print(qid[0], ' error')
-    with open('data/wikidata_music_new_entities.pkl', 'wb') as f:
+                continue
+            if len(KG.keys()) % 1000 == 0 and len(KG.keys()) != 0 and written == 0:
+                with open('data/wikidata_music_new_entities_lazy.pkl', 'wb') as f:
+                    pickle.dump(KG, f)
+                    written = 1
+            if len(KG) == len(qids):
+                break
+    with open('data/wikidata_music_new_entities_lazy.pkl', 'wb') as f:
         pickle.dump(KG, f)
 
 
@@ -46,5 +47,9 @@ if __name__ == '__main__':
     parser.add_argument('--new_entities_path',
                         type=str,
                         default='data/objects_item_nosubjects.tsv')
+
     args = parser.parse_args()
-    main(args.wikidata_path, args.index_path, args.new_entities_path)
+    main(args.wikidata_path, args.new_entities_path)
+
+
+

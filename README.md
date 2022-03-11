@@ -17,6 +17,11 @@ This repository contains code and data for extracting the sub-KG about the music
   - objects_nosubjects.tsv storing all objects that do not appear in subject position
 - objects_nosubjects.tsv is given as input for *filter_Q_notQ_wd_entities.py*
 
+### *filter_Q_notQ_wd_entities.py*
+- Starting from a tsv file (objects_nosubjects.tsv), it generates:
+  -  a file storing wikidata entities (starting with Q)
+  -  a file storing other entities (supposedly datatypes)
+
 ## Data
 Please download the following files into the data folder
 - [music entities](https://liveunibo.sharepoint.com/:u:/r/sites/polifonia/Shared%20Documents/WP4/Wikipedia%20corpus-KG/data/wikidata_music_entities.pkl?csf=1&web=1&e=Eqb5Du) (*.pkl*)

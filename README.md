@@ -5,9 +5,17 @@ This repository contains code and data for extracting the sub-KG about the music
 - once the *.bz2* is created, it can be converted into a KGTK graph with with:
 > kgtk import-wikidata -i wikidata_music_entities.bz2 --node nodefile.tsv --edge edgefile.tsv --qual qualfile.tsv --proc 64
 
-### *create_new_pkl*
+### *create_new_pkl.py*
 - It uses the Wikidata index to select specific WIkidata entities (specified in a *.txt* file)
 - It store the resulting json object into a *.pkl* file that can be used as input for *create_bz4kgtk.py*
+
+### *objects_nosubjects.sh*
+- It creates 4 files, starting from the edgefile.tsv of KGTK:
+  - objects.tsv storing all objects of the graph
+  - subjects.tsv storing all subjects
+  - objects_subjects.tsv storing all objects that appear also in subject position
+  - objects_nosubjects.tsv storing all objects that do not appear in subject position
+- objects_nosubjects.tsv is given as input for *filter_Q_notQ_wd_entities.py*
 
 ## Data
 Please download the following files into the data folder

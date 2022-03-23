@@ -5,7 +5,7 @@ import bz2
 import tqdm
 import json
 
-def main(wikidata_path, new_entities_path):
+def main(wikidata_path, new_entities_path, output_path):
     KG = dict()
     with open(new_entities_path) as f:
         reader = csv.reader(f, delimiter='\t')
@@ -21,12 +21,12 @@ def main(wikidata_path, new_entities_path):
             except:
                 continue
             if len(KG.keys()) % 1000 == 0 and len(KG.keys()) != 0 and written == 0:
-                with open('data/wikidata_music_new_entities_lazy.pkl', 'wb') as f:
+                with open(output_path, 'wb') as f:
                     pickle.dump(KG, f)
                     written = 1
             if len(KG) == len(qids):
                 break
-    with open('data/wikidata_music_new_entities_lazy.pkl', 'wb') as f:
+    with open(output_path, 'wb') as f:
         pickle.dump(KG, f)
 
 
@@ -36,10 +36,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     # Parameters
-    parser.add_argument('--index_path',
-                        type=str,
-                        default='data/wikidata_index.pkl')
-                        #default='/home/rocco/Desktop/python/wiki_parse/data/wikidata_index.pkl')
     parser.add_argument('--wikidata_path',
                         type=str,
                         default='data/data/latest-all.json')
@@ -47,9 +43,12 @@ if __name__ == '__main__':
     parser.add_argument('--new_entities_path',
                         type=str,
                         default='data/objects_item_nosubjects.tsv')
+    parser.add_argument('--output_path',
+                        type=str,
+                        default='data/wikidata_music_new_entities_lazy.pkl')
 
     args = parser.parse_args()
-    main(args.wikidata_path, args.new_entities_path)
+    main(args.wikidata_path, args.new_entities_path, args.output_path)
 
 
 
